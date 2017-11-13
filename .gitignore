@@ -3,22 +3,11 @@
 Icon?
 ._*
 
-# Linux
-.directory
-*~
-
 # npm
 node_modules
 package-lock.json
 *.log
 *.gz
-
-
-# Coveralls
-coverage
-
-# Benchmarking
-benchmarks/graphs
 
 *.env
 
