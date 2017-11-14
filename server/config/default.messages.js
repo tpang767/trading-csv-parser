@@ -7,10 +7,8 @@ const dbError = (err) => log(chalk.red("Mongoose default connection error: " + e
 
 const dbDisconnected = () =>  log(chalk.yellow("Mongoose default connection disconnected"))
 
-const dbTerminated = () => mongoose.connection.close(() => {
-  log(chalk.yellow("Mongoose default connection disconnected through app termination"))
-  process.exit(0)
-})
+const dbTerminated = () => log(chalk.yellow("Mongoose default connection disconnected through app termination"))
+
 
 const serverStart = (err) => () => {
     if(err) log(chalk.red.bgWhite('Server Start Error: ' + err))

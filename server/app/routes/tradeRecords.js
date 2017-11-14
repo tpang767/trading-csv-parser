@@ -1,30 +1,32 @@
 import asyncHandle from "../middleware/index"
+import TradeRecord from "../models/TradeRecord"
+
 const fs = require("fs")
 const multer = require("multer")
 const csv = require("csvtojson")
-const TradeRecords = require("../models/tradeRecords")
+// const TradeRecordController = require("../controllers/tradeRecord")
 const upload = multer({ dest: __dirname + "temp.store-csv" })
 const express = require("express")
 
 const router = express.Router()
 
-router.get("/traderecords", asyncHandle(async (req, res, next) => {
-    const records = await TradeRecord.getAll()
+router.get("/", asyncHandle(async (req, res, next) => {
+    const records = await TradeRecord.getList()
     res.status(200).json(records)
   })
 )
 
-router.post("/traderecords",upload.single("csv"), asyncHandle(async (req, res, next) => {
+router.post("/",upload.single("csv"), asyncHandle(async (req, res, next) => {
     const csvFile = req.file
     const csvPath = csvFile.path
-    const tradeIds = await TradeRecord.getAllByField("tradeId")
-    const headers = await TradeRecord.getHeaders()
+    const tradeIds = await TradeRecordController.getAllByField("tradeId")
+    const headers = await TradeRecordController.getHeaders()
 
     let store = []
     let count = 0
 
     const readStream = await readCSV()
-    const save = await TradeRecord.saveAll(store)
+    const save = await TradeRecordController.saveAll(store)
     res.status(200).json(save)
 
     function readCSV() {
@@ -49,4 +51,4 @@ router.post("/traderecords",upload.single("csv"), asyncHandle(async (req, res, n
   })
 )
 
-module.exports = router
+export default router

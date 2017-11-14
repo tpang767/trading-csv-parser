@@ -17,14 +17,20 @@ const isDeveloping = process.env.NODE_ENV !== "production"
 const port = isDeveloping ? 3000 : process.env.PORT
 const app = express()
 const dotenv = require("dotenv").config()
-const TradeRecordsRouter = require("./app/routes/tradeRecords")
+import Router from "./app/routes/tradeRecords"
 
+// console.log(process.env_DB_ACCESS)
 mongoose.Promise = global.Promise
 mongoose.connect(process.env.DB_ACCESS, { useMongoClient: true })
 mongoose.connection.on("connected", messages.dbConnected)
 mongoose.connection.on("error", messages.dbError)
 mongoose.connection.on("disconnected", messages.dbDisconnected)
-process.on("SIGINT", messages.dbTerminated)
+process.on("SIGINT", () => {
+  mongoose.connection.close(() => { 
+        console.log('Mongoose default connection disconnected through app termination')
+        process.exit(0); 
+})
+})
 
 if (isDeveloping) {
   const options = {
@@ -52,7 +58,7 @@ app.use(bodyParser.json({ limit: "52428800" }))
 app.use(bodyParser.urlencoded({ limit: "52428800", extended: false }))
 
 app.use(express.static(__dirname + "/dist"))
-app.use("/", TradeRecordsRouter)
+app.use("/traderecords", Router)
 
 app.listen(port, "0.0.0.0", function(err) {
   if (err) {
